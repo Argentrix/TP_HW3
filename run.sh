@@ -61,6 +61,20 @@ case "$1" in
         docker run --rm -v "$(pwd)/data:/data" hw3-reporter ls -la /data
         ;;
         
+    report_server)
+        echo "Запуск веб-сервера для просмотра отчета"
+        if [ ! -f "data/report.html" ]; then
+            echo "Сначала сгенерируйте отчет через run_reporter"
+            exit 1
+        fi
+        
+        docker stop hw3-web-server &>/dev/null || true
+        
+        docker run -d --name hw3-web-server -v "$(pwd)/data:/usr/share/nginx/html" -p 8080:80 nginx:alpine
+        
+        echo "Контейнер запущен, отчет доступен во вкладке PORTS в Codespaces"
+        ;;
+
     *)
         echo "Неизвестная команда: $1"
         exit 1
